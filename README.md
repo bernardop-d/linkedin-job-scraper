@@ -1,44 +1,56 @@
-# LinkedIn Job Scraper 🕵️‍♂️
+# 🕵️‍♂️ LinkedIn Job Scraper API
 
-Ferramenta de automação desenvolvida em Python para monitoramento e coleta de vagas no LinkedIn. Utiliza **Selenium** para navegação e simulação de comportamento humano.
+API robusta desenvolvida em **Python** para automatizar a busca e extração de vagas de emprego no LinkedIn. O projeto utiliza **FastAPI** para fornecer uma interface de usuário interativa e **Selenium** para a automação do navegador com comportamento simulado.
 
 ## 🚀 Funcionalidades
-- Login automático seguro (senha não salva no código).
-- Busca personalizada por cargo e localização.
-- Exportação dos resultados para CSV (Excel).
-- Anti-bot básico: Delays aleatórios para simular navegação humana.
 
-## 🛠️ Instalação
+- **Interface Visual (Swagger UI)**: Documentação interativa que permite realizar buscas sem escrever uma linha de código.
+- **Filtros Dinâmicos**: Suporte para filtrar vagas por cargo, localização e regime de trabalho (Remoto, Híbrido ou Presencial).
+- **Scroll Infinito**: Algoritmo de rolagem automática e detecção do botão "Ver mais" para carregar um grande volume de resultados.
+- **Exportação Automática**: Gera e baixa um arquivo CSV (Excel) formatado com `utf-8-sig` para garantir a leitura correta de acentos no Windows.
+- **Anti-Duplicidade**: Lógica de filtragem por URL para garantir que cada vaga seja listada apenas uma vez no relatório final.
 
-1. Clone o repositório:
+## 🛠️ Tecnologias Utilizadas
+
+- **Python 3.10+**
+- **FastAPI**: Framework moderno para construção de APIs.
+- **Selenium**: Automação de navegador para extração de dados dinâmicos.
+- **Webdriver Manager**: Gerenciamento automático de drivers do navegador.
+- **Uvicorn**: Servidor ASGI de alta performance.
+
+## 📋 Como rodar o projeto
+
+1. **Clone o repositório**:
    ```bash
-   git clone <seu-repositorio>
+   git clone [https://github.com/SEU_USUARIO/linkedin-job-scraper.git](https://github.com/SEU_USUARIO/linkedin-job-scraper.git)
    cd linkedin-job-scraper
-   ```
+Crie e ative seu ambiente virtual:
 
-2. Instale as dependências:
-   ```bash
-   pip install -r requirements.txt
-   ```
+Bash
 
-## ▶️ Execução
+python -m venv .venv
+# No Windows:
+.\.venv\Scripts\activate
+Instale as dependências:
 
-```bash
-python main.py
-```
+Bash
 
-## 📁 Output
+pip install -r requirements.txt
+Inicie o servidor:
 
-O script gera um arquivo `jobs_data.csv` contendo:
+Bash
 
-- Title
-- Company
-- Link
+python -m uvicorn main:app --reload
+Acesse a interface de busca:
+Abra http://127.0.0.1:8000/docs no seu navegador, clique em GET /vagas/, depois em Try it out e preencha os campos.
 
-## ⚠️ Observação
+📁 Output (Dados Coletados)
+O sistema gera um arquivo CSV contendo:
 
-O LinkedIn pode alterar seletores HTML a qualquer momento. Caso o script pare de funcionar, revise as classes utilizadas no código.
+Título: Nome da posição anunciada.
 
----
+Empresa: Nome da organização contratante.
 
-Desenvolvido para fins educacionais e de portfólio.
+Local: Cidade e Estado da vaga.
+
+Link: URL direta para a candidatura no LinkedIn.
