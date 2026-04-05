@@ -1,56 +1,101 @@
-# 🕵️‍♂️ LinkedIn Job Scraper API
+# LinkedIn Job Scraper
 
-API robusta desenvolvida em **Python** para automatizar a busca e extração de vagas de emprego no LinkedIn. O projeto utiliza **FastAPI** para fornecer uma interface de usuário interativa e **Selenium** para a automação do navegador com comportamento simulado.
+Script que busca vagas de emprego no LinkedIn e salva os resultados em um arquivo CSV. Você informa o cargo, a cidade e o tipo de trabalho (remoto, híbrido ou presencial), e o programa abre o navegador, coleta as vagas e gera o arquivo automaticamente.
 
-## 🚀 Funcionalidades
+---
 
-- **Interface Visual (Swagger UI)**: Documentação interativa que permite realizar buscas sem escrever uma linha de código.
-- **Filtros Dinâmicos**: Suporte para filtrar vagas por cargo, localização e regime de trabalho (Remoto, Híbrido ou Presencial).
-- **Scroll Infinito**: Algoritmo de rolagem automática e detecção do botão "Ver mais" para carregar um grande volume de resultados.
-- **Exportação Automática**: Gera e baixa um arquivo CSV (Excel) formatado com `utf-8-sig` para garantir a leitura correta de acentos no Windows.
-- **Anti-Duplicidade**: Lógica de filtragem por URL para garantir que cada vaga seja listada apenas uma vez no relatório final.
+## Tecnologias usadas
 
-## 🛠️ Tecnologias Utilizadas
+- Python 3.10+
+- FastAPI
+- Selenium
+- Webdriver Manager
+- Uvicorn
 
-- **Python 3.10+**
-- **FastAPI**: Framework moderno para construção de APIs.
-- **Selenium**: Automação de navegador para extração de dados dinâmicos.
-- **Webdriver Manager**: Gerenciamento automático de drivers do navegador.
-- **Uvicorn**: Servidor ASGI de alta performance.
+---
 
-## 📋 Como rodar o projeto
+## O que o projeto faz
 
-1. **Clone o repositório**:
-   ```bash
-   git clone [https://github.com/SEU_USUARIO/linkedin-job-scraper.git](https://github.com/SEU_USUARIO/linkedin-job-scraper.git)
-   cd linkedin-job-scraper
-Crie e ative seu ambiente virtual:
+O projeto abre o Chrome de forma automática (usando Selenium), acessa o LinkedIn e coleta informações sobre as vagas encontradas: nome da vaga, empresa, localização e link. No final, salva tudo em um arquivo `.csv` que você pode abrir no Excel.
 
-Bash
+Ele também tem uma pequena API feita com FastAPI, que você acessa pelo navegador em `/docs`. Lá você pode preencher os filtros e clicar em "Execute" sem precisar usar o terminal.
 
+---
+
+## Como rodar o projeto
+
+### 1. Clone o repositório
+
+```bash
+git clone https://github.com/bernardop-d/linkedin-job-scraper.git
+cd linkedin-job-scraper
+```
+
+### 2. Crie e ative um ambiente virtual
+
+```bash
 python -m venv .venv
-# No Windows:
-.\.venv\Scripts\activate
-Instale as dependências:
 
-Bash
+# Linux / macOS
+source .venv/bin/activate
 
+# Windows
+.venv\Scripts\activate
+```
+
+### 3. Instale as dependências
+
+```bash
 pip install -r requirements.txt
-Inicie o servidor:
+```
 
-Bash
+### 4. Inicie o servidor
 
+```bash
 python -m uvicorn main:app --reload
-Acesse a interface de busca:
-Abra http://127.0.0.1:8000/docs no seu navegador, clique em GET /vagas/, depois em Try it out e preencha os campos.
+```
 
-📁 Output (Dados Coletados)
-O sistema gera um arquivo CSV contendo:
+### 5. Acesse no navegador
 
-Título: Nome da posição anunciada.
+Abra: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
-Empresa: Nome da organização contratante.
+- Clique em **GET /vagas/**
+- Clique em **Try it out**
+- Preencha os campos (cargo, localização, tipo de trabalho)
+- Clique em **Execute**
 
-Local: Cidade e Estado da vaga.
+O arquivo CSV será gerado e baixado automaticamente.
 
-Link: URL direta para a candidatura no LinkedIn.
+---
+
+## Observações importantes
+
+- O projeto abre o Chrome durante a execução. Isso é normal — o Selenium precisa de um navegador para funcionar.
+- Você precisa ter o **Google Chrome instalado** na sua máquina. O Webdriver Manager cuida do restante.
+- O LinkedIn pode bloquear a busca se perceber que é automação. Se isso acontecer, tente rodar novamente depois de alguns minutos.
+
+---
+
+## Como rodar os testes
+
+```bash
+pip install pytest
+pytest tests/ -v
+```
+
+---
+
+## Estrutura de arquivos
+
+```
+linkedin-job-scraper/
+├── main.py            # Código principal com a API e o scraper
+├── requirements.txt   # Dependências do projeto
+├── tests/
+│   └── test_main.py   # Testes unitários
+└── README.md
+```
+
+---
+
+Feito por [Bernardo P. D.](https://github.com/bernardop-d)
