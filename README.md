@@ -1,101 +1,93 @@
 # LinkedIn Job Scraper
 
-Script que busca vagas de emprego no LinkedIn e salva os resultados em um arquivo CSV. Você informa o cargo, a cidade e o tipo de trabalho (remoto, híbrido ou presencial), e o programa abre o navegador, coleta as vagas e gera o arquivo automaticamente.
+API REST em **FastAPI** sobre automação com **Selenium** para busca e filtragem de vagas de emprego no LinkedIn, com validação de schema via Pydantic e exportação estruturada em CSV.
 
 ---
 
-## Tecnologias usadas
+## O Problema
 
-- Python 3.10+
-- FastAPI
-- Selenium
-- Webdriver Manager
-- Uvicorn
+Buscar vagas manualmente no LinkedIn consome tempo e exige repetição: filtrar por regime de trabalho, rolar a página, copiar dados. Este projeto automatiza esse processo inteiro e expõe o resultado via API, eliminando a necessidade de interação manual.
 
----
+## A Solução Técnica
 
-## O que o projeto faz
+O desafio central foi **simular comportamento humano** para contornar a detecção de bots do LinkedIn. As decisões de Back-End foram:
 
-O projeto abre o Chrome de forma automática (usando Selenium), acessa o LinkedIn e coleta informações sobre as vagas encontradas: nome da vaga, empresa, localização e link. No final, salva tudo em um arquivo `.csv` que você pode abrir no Excel.
+- **Scroll progressivo com delays variáveis** para imitar padrão de leitura humana
+- - **Separação de responsabilidades**: a camada de scraping (Selenium) é desacoplada da camada de API (FastAPI), permitindo evoluir cada parte de forma independente
+  - - **Validação de schema com Pydantic** antes da serialização — campos ausentes ou malformados são descartados antes de chegar no endpoint
+    - - **FastAPI como camada de entrega**: expõe um endpoint `GET /vagas/` com parâmetros de filtro, documentação automática via `/docs` e resposta em JSON ou CSV
+     
+      - ## Stack
+     
+      - | Tecnologia | Papel |
+      - |---|---|
+      - | Python 3.10+ | Linguagem principal |
+      - | FastAPI | Camada de API REST e documentação automática |
+      - | Selenium | Automação do navegador e extração de dados |
+      - | Webdriver Manager | Gerenciamento automático do ChromeDriver |
+      - | Pydantic | Validação e serialização dos dados coletados |
+      - | Uvicorn | Servidor ASGI para servir a API |
+     
+      - ## Como Rodar
+     
+      - ### 1. Clone o repositório
+      - ```bash
+        git clone https://github.com/bernardop-d/linkedin-job-scraper.git
+        cd linkedin-job-scraper
+        ```
 
-Ele também tem uma pequena API feita com FastAPI, que você acessa pelo navegador em `/docs`. Lá você pode preencher os filtros e clicar em "Execute" sem precisar usar o terminal.
+        ### 2. Crie e ative um ambiente virtual
+        ```bash
+        python -m venv .venv
+        # Linux / macOS
+        source .venv/bin/activate
+        # Windows
+        .venv\Scripts\activate
+        ```
 
----
+        ### 3. Instale as dependências
+        ```bash
+        pip install -r requirements.txt
+        ```
 
-## Como rodar o projeto
+        ### 4. Inicie o servidor
+        ```bash
+        python -m uvicorn main:app --reload
+        ```
 
-### 1. Clone o repositório
+        ### 5. Acesse a API
+        Abra: `http://127.0.0.1:8000/docs`
 
-```bash
-git clone https://github.com/bernardop-d/linkedin-job-scraper.git
-cd linkedin-job-scraper
-```
+        - Clique em `GET /vagas/` → `Try it out`
+        - - Preencha os filtros: `cargo`, `localização`, `tipo de trabalho`
+          - - Clique em `Execute`
+           
+            - O arquivo CSV será gerado e retornado automaticamente.
+           
+            - ## Estrutura do Projeto
+           
+            - ```
+              linkedin-job-scraper/
+              ├── main.py          # Endpoints FastAPI + lógica de scraping
+              ├── requirements.txt # Dependências
+              ├── tests/
+              │   └── test_main.py # Testes unitários
+              └── README.md
+              ```
 
-### 2. Crie e ative um ambiente virtual
+              ## Rodando os Testes
 
-```bash
-python -m venv .venv
+              ```bash
+              pip install pytest
+              pytest tests/ -v
+              ```
 
-# Linux / macOS
-source .venv/bin/activate
+              ## Observações Técnicas
 
-# Windows
-.venv\Scripts\activate
-```
+              - O Chrome é aberto de forma visível durante a execução. É necessário ter o Google Chrome instalado.
+              - - O Webdriver Manager detecta e baixa automaticamente a versão correta do ChromeDriver.
+                - - O LinkedIn pode bloquear requisições identificadas como automação. Nesse caso, aguarde alguns minutos antes de rodar novamente.
+                 
+                  - ---
 
-### 3. Instale as dependências
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Inicie o servidor
-
-```bash
-python -m uvicorn main:app --reload
-```
-
-### 5. Acesse no navegador
-
-Abra: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-
-- Clique em **GET /vagas/**
-- Clique em **Try it out**
-- Preencha os campos (cargo, localização, tipo de trabalho)
-- Clique em **Execute**
-
-O arquivo CSV será gerado e baixado automaticamente.
-
----
-
-## Observações importantes
-
-- O projeto abre o Chrome durante a execução. Isso é normal — o Selenium precisa de um navegador para funcionar.
-- Você precisa ter o **Google Chrome instalado** na sua máquina. O Webdriver Manager cuida do restante.
-- O LinkedIn pode bloquear a busca se perceber que é automação. Se isso acontecer, tente rodar novamente depois de alguns minutos.
-
----
-
-## Como rodar os testes
-
-```bash
-pip install pytest
-pytest tests/ -v
-```
-
----
-
-## Estrutura de arquivos
-
-```
-linkedin-job-scraper/
-├── main.py            # Código principal com a API e o scraper
-├── requirements.txt   # Dependências do projeto
-├── tests/
-│   └── test_main.py   # Testes unitários
-└── README.md
-```
-
----
-
-Feito por [Bernardo P. D.](https://github.com/bernardop-d)
+                  Feito por [Bernardo P. D.](https://www.linkedin.com/in/bernardop-d/)
