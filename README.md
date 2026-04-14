@@ -1,93 +1,72 @@
-# LinkedIn Job Scraper
+🚀 LinkedIn Job Scraper API
+API REST desenvolvida com FastAPI e Selenium para automação de busca, filtragem e extração de vagas de emprego no LinkedIn. O sistema conta com validação rigorosa de dados via Pydantic e exportação estruturada.
 
-API REST em **FastAPI** sobre automação com **Selenium** para busca e filtragem de vagas de emprego no LinkedIn, com validação de schema via Pydantic e exportação estruturada em CSV.
+📌 O Problema
+A busca manual por vagas no LinkedIn é um processo repetitivo e moroso. Filtrar por regime de trabalho, rolar infinitas páginas e organizar dados manualmente consome um tempo que poderia ser dedicado à preparação para entrevistas.
 
----
+💡 A Solução
+Este projeto automatiza o ciclo completo de coleta:
 
-## O Problema
+Automação de Navegação: Simula o comportamento humano para navegar entre as vagas.
 
-Buscar vagas manualmente no LinkedIn consome tempo e exige repetição: filtrar por regime de trabalho, rolar a página, copiar dados. Este projeto automatiza esse processo inteiro e expõe o resultado via API, eliminando a necessidade de interação manual.
+Extração Inteligente: Captura títulos, empresas, localizações e links.
 
-## A Solução Técnica
+Entrega via API: Expõe os dados prontos para consumo ou análise em formato JSON/CSV.
 
-O desafio central foi **simular comportamento humano** para contornar a detecção de bots do LinkedIn. As decisões de Back-End foram:
+🛠️ Stack Técnica
+Python 3.10+: Linguagem base.
 
-- **Scroll progressivo com delays variáveis** para imitar padrão de leitura humana
-- - **Separação de responsabilidades**: a camada de scraping (Selenium) é desacoplada da camada de API (FastAPI), permitindo evoluir cada parte de forma independente
-  - - **Validação de schema com Pydantic** antes da serialização — campos ausentes ou malformados são descartados antes de chegar no endpoint
-    - - **FastAPI como camada de entrega**: expõe um endpoint `GET /vagas/` com parâmetros de filtro, documentação automática via `/docs` e resposta em JSON ou CSV
-     
-      - ## Stack
-     
-      - | Tecnologia | Papel |
-      - |---|---|
-      - | Python 3.10+ | Linguagem principal |
-      - | FastAPI | Camada de API REST e documentação automática |
-      - | Selenium | Automação do navegador e extração de dados |
-      - | Webdriver Manager | Gerenciamento automático do ChromeDriver |
-      - | Pydantic | Validação e serialização dos dados coletados |
-      - | Uvicorn | Servidor ASGI para servir a API |
-     
-      - ## Como Rodar
-     
-      - ### 1. Clone o repositório
-      - ```bash
-        git clone https://github.com/bernardop-d/linkedin-job-scraper.git
-        cd linkedin-job-scraper
-        ```
+FastAPI: Framework de alta performance para a camada de API.
 
-        ### 2. Crie e ative um ambiente virtual
-        ```bash
-        python -m venv .venv
-        # Linux / macOS
-        source .venv/bin/activate
-        # Windows
-        .venv\Scripts\activate
-        ```
+Selenium & Webdriver Manager: Automação do navegador com gerenciamento dinâmico de drivers.
 
-        ### 3. Instale as dependências
-        ```bash
-        pip install -r requirements.txt
-        ```
+Pydantic: Data validation e garantia de integridade dos schemas.
 
-        ### 4. Inicie o servidor
-        ```bash
-        python -m uvicorn main:app --reload
-        ```
+Uvicorn: Servidor ASGI de produção.
 
-        ### 5. Acesse a API
-        Abra: `http://127.0.0.1:8000/docs`
+⚙️ Funcionalidades e Decisões Técnicas
+Mimetismo Humano: Implementação de scroll progressivo e intervalos de tempo (delays) variáveis para mitigar a detecção de bots.
 
-        - Clique em `GET /vagas/` → `Try it out`
-        - - Preencha os filtros: `cargo`, `localização`, `tipo de trabalho`
-          - - Clique em `Execute`
-           
-            - O arquivo CSV será gerado e retornado automaticamente.
-           
-            - ## Estrutura do Projeto
-           
-            - ```
-              linkedin-job-scraper/
-              ├── main.py          # Endpoints FastAPI + lógica de scraping
-              ├── requirements.txt # Dependências
-              ├── tests/
-              │   └── test_main.py # Testes unitários
-              └── README.md
-              ```
+Desacoplamento: Lógica de scraping separada da interface da API, facilitando a manutenção e futuras trocas de biblioteca (ex: para Playwright).
 
-              ## Rodando os Testes
+Fail-Fast com Pydantic: Se o LinkedIn alterar a estrutura da página, a validação descarta dados malformados antes de retornar ao usuário, garantindo um CSV limpo.
 
-              ```bash
-              pip install pytest
-              pytest tests/ -v
-              ```
+Documentação Automática: Swagger UI disponível nativamente para teste dos endpoints.
 
-              ## Observações Técnicas
+🚀 Como Executar
+1. Clonar e Instalar
+Bash
+git clone https://github.com/bernardop-d/linkedin-job-scraper.git
+cd linkedin-job-scraper
+python -m venv .venv
+source .venv/bin/activate  # Linux/macOS
+# .venv\Scripts\activate   # Windows
+pip install -r requirements.txt
+2. Rodar a Aplicação
+Bash
+python -m uvicorn main:app --reload
+3. Utilizar
+Acesse http://127.0.0.1:8000/docs para interagir com a interface:
 
-              - O Chrome é aberto de forma visível durante a execução. É necessário ter o Google Chrome instalado.
-              - - O Webdriver Manager detecta e baixa automaticamente a versão correta do ChromeDriver.
-                - - O LinkedIn pode bloquear requisições identificadas como automação. Nesse caso, aguarde alguns minutos antes de rodar novamente.
-                 
-                  - ---
+Endpoint GET /vagas/: Informe o cargo, localização e filtros desejados.
 
-                  Feito por [Bernardo P. D.](https://www.linkedin.com/in/bernardop-d/)
+O sistema abrirá o navegador, processará as vagas e retornará o arquivo estruturado.
+
+📂 Estrutura de Arquivos
+Plaintext
+linkedin-job-scraper/
+├── app/
+│   ├── scraper.py     # Lógica de automação Selenium
+│   ├── schemas.py     # Modelos de dados Pydantic
+│   └── main.py        # Endpoints FastAPI
+├── tests/             # Testes unitários com Pytest
+├── requirements.txt
+└── README.md
+⚠️ Observações Técnicas
+Requisito: É necessário ter o Google Chrome instalado no ambiente.
+
+Rate Limit: O LinkedIn possui mecanismos de defesa robustos. Caso ocorra bloqueio, o scraper foi desenhado para registrar o erro e sugerir um intervalo de espera.
+
+Modo Headless: Atualmente o Chrome abre de forma visível para facilitar o monitoramento da execução.
+
+Desenvolvido por Bernardo Pereira Dutra
